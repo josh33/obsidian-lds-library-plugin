@@ -59,7 +59,15 @@ Insert a callout to a verse using either `:<Book Name> <Chapter Number>:<Verse N
 
 You can referece any range, selection, or series of verses from a given chapter using the above syntax.
 
+Accepted Doctrine and Covenants aliases also include:
+
+* `:D&C 88:36:`
+* `:d&c 88 36:`
+* `:dandc 88 36:`
+
 Obsidian won’t recognize your desired reference until you add a : at the end. Each reference must be on its own line.
+
+Single-verse inserts are rendered as a compact one-line output, while multi-verse inserts keep callout formatting.
 
 Only English book titles are recognized. For example `:1 Nephi 1 1:` is recognized, but `:1 Нефи 1:1:` isn't.
 
@@ -99,6 +107,8 @@ The default language used for scriptures and conference talks can be set in the 
 
 ### One-time Language Syntax
 For both verses and conference quotes, optionally specify the language for the reference by appending `[<lang>]` at the front. If the language isn't specified, the default language will be used.
+
+For example, you can use a D&C alias with language syntax like `[eng]:d&c 88 36:`.
 
 |![Language Verse](https://github.com/user-attachments/assets/7a2d0977-13d5-485c-8cc3-a6ad0711f4dd)|![Language Verse Callout](https://github.com/user-attachments/assets/180ce3bf-5b72-4466-ab65-3274a3212770)|
 |-|-|
