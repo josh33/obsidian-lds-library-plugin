@@ -69,11 +69,18 @@ export class VerseSuggestion {
         return `https://www.churchofjesuschrist.org/study/scriptures/${volumeTitleShort}/${bookTitleShort}/${this.chapter}?lang=${this.lang}&id=${this.verseIds}`;
     }
 
+    private normalizeBookInput(bookTitle: string): string {
+        return bookTitle.toLowerCase().replace(/[^a-z0-9]/g, "");
+    }
+
     private getShortenedName(bookTitle: string) {
+        const normalizedBookTitle = this.normalizeBookInput(bookTitle);
+
         for (const [name, info] of Object.entries(bookData)) {
             if (
                 info.names.some(
-                    (name) => name.toLowerCase() === bookTitle.toLowerCase(),
+                    (alias) =>
+                        this.normalizeBookInput(alias) === normalizedBookTitle,
                 )
             ) {
                 const volume = info.volume;
@@ -94,7 +101,10 @@ export class VerseSuggestion {
         this.url = this.getUrl(volumeTitleShort, bookTitleShort);
 
         const scriptureData = await fetchScripture(this.url);
-        this.bookTitleInLanguage = scriptureData.nativeBookTitle;
+        this.bookTitleInLanguage =
+            bookTitleShort === "dc"
+                ? "Doctrine & Covenants"
+                : scriptureData.nativeBookTitle;
         this.verses = scriptureData.verses.map((_verse) => {
             const [_, verseNumber, text] = _verse.match(/^(\d+)\s*(.*)$/) ?? [
                 null,
