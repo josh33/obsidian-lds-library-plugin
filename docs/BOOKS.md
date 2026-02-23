@@ -90,6 +90,11 @@
 ## Doctrine and Covenants
 * Doctrine and Covenants
 
+Accepted aliases:
+* D&C
+* d&c
+* dandc
+
 ## Pearl of Great Price
 * Moses
 * Abraham
