@@ -41,7 +41,7 @@ export const bookData: BookData = {
     dc: {
         volume: "dc-testament",
         n_ch: 138,
-        names: ["Doctrine and Covenants", "D&C"],
+        names: ["Doctrine and Covenants", "D&C", "d&c", "dandc"],
     },
     gen: { volume: "ot", n_ch: 50, names: ["Genesis", "Gen."] },
     ex: { volume: "ot", n_ch: 40, names: ["Exodus", "Ex."] },

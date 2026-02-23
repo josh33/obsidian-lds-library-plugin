@@ -2,6 +2,14 @@ import { AvailableLanguage } from "@/lang";
 import { bookData } from "@/utils/config";
 import { fetchScripture } from "@/utils/scripture";
 
+
+function normalizeBookInput(input: string): string {
+    return input
+        .toLowerCase()
+        .replace(/&/g, "and")
+        .replace(/[^a-z0-9]/g, "");
+}
+
 export class VerseSuggestion {
     // defining variables in the class.
     public text: string;
@@ -59,10 +67,13 @@ export class VerseSuggestion {
     }
 
     private getShortenedName(bookTitle: string) {
+        const normalizedBookTitle = normalizeBookInput(bookTitle);
+
         for (const [name, info] of Object.entries(bookData)) {
             if (
                 info.names.some(
-                    (name) => name.toLowerCase() === bookTitle.toLowerCase(),
+                    (candidateName) =>
+                        normalizeBookInput(candidateName) === normalizedBookTitle,
                 )
             ) {
                 const volume = info.volume;
@@ -84,6 +95,10 @@ export class VerseSuggestion {
 
         const scriptureData = await fetchScripture(this.url);
         this.bookTitleInLanguage = scriptureData.nativeBookTitle;
+
+        if (bookTitleShort === "dc") {
+            this.bookTitleInLanguage = "Doctrine & Covenants";
+        }
         const verses = scriptureData.verses.map((_verse) => {
             const [_, verseNumber, text] = _verse.match(/^(\d+)\s*(.*)$/) ?? [
                 null,
