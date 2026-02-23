@@ -9,6 +9,7 @@ export class VerseSuggestion {
     private bookTitleInLanguage: string;
     private verseIds: string;
     private url: string;
+    private verses: { verse: number; text: string }[] = [];
 
     private constructor(
         public book: string,
@@ -46,6 +47,16 @@ export class VerseSuggestion {
     }
 
     public getReplacement(): string {
+        if (!this.verseString.includes(",") && !this.verseString.includes("-")) {
+            const verse = this.verses[0];
+
+            if (!verse) {
+                return "\n";
+            }
+
+            return `${this.bookTitleInLanguage} ${this.chapter}:${verse.verse} ${verse.text}\n`;
+        }
+
         const range = this.verseString.replaceAll(",", ", ");
         return [
             `> [!ldslib] [${this.bookTitleInLanguage}:${range}](${this.url})`,
@@ -84,7 +95,7 @@ export class VerseSuggestion {
 
         const scriptureData = await fetchScripture(this.url);
         this.bookTitleInLanguage = scriptureData.nativeBookTitle;
-        const verses = scriptureData.verses.map((_verse) => {
+        this.verses = scriptureData.verses.map((_verse) => {
             const [_, verseNumber, text] = _verse.match(/^(\d+)\s*(.*)$/) ?? [
                 null,
                 "0",
@@ -101,11 +112,11 @@ export class VerseSuggestion {
             };
         });
 
-        this.text = verses
+        this.text = this.verses
             .map(({ verse, text }) => `> ${verse} ${text}`)
             .join("\n");
 
-        this.previewText = verses
+        this.previewText = this.verses
             .map(({ verse, text }) => `${verse} ${text}`)
             .join("\n");
     }
