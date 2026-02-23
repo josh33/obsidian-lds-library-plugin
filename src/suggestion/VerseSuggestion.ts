@@ -54,7 +54,7 @@ export class VerseSuggestion {
                 return "\n";
             }
 
-            return `${this.bookTitleInLanguage} ${this.chapter}:${verse.verse} ${verse.text}\n`;
+            return `> ${this.bookTitleInLanguage} ${this.chapter}:${verse.verse} ${verse.text}\n`;
         }
 
         const range = this.verseString.replaceAll(",", ", ");
