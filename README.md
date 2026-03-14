@@ -55,7 +55,10 @@ The [standard works](https://www.churchofjesuschrist.org/study/manual/gospel-top
 
 ### How To Reference Verses
 
-Insert a callout to a verse using either `:<Book Name> <Chapter Number>:<Verse Numbers>:` or `:<Book Name> <Chapter Number> <Verse Numbers>:`.
+Insert a scripture using either `:<Book Name> <Chapter Number>:<Verse Numbers>:` or `:<Book Name> <Chapter Number> <Verse Numbers>:`.
+
+- `:` inserts blockquote output.
+- `:!` inserts an `ldslib` callout (with the `book-open-text` icon).
 
 You can referece any range, selection, or series of verses from a given chapter using the above syntax.
 
@@ -67,7 +70,7 @@ Accepted Doctrine and Covenants aliases also include:
 
 Obsidian won’t recognize your desired reference until you add a : at the end. Each reference must be on its own line.
 
-Single-verse inserts are rendered as a compact one-line output, while multi-verse inserts keep callout formatting.
+Blockquote and callout styles both support single verses, ranges, and comma-separated verse selections.
 
 Only English book titles are recognized. For example `:1 Nephi 1 1:` is recognized, but `:1 Нефи 1:1:` isn't.
 

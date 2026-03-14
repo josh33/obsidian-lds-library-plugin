@@ -11,7 +11,7 @@ import { isAvailableLanguage } from "@/lang";
 import { VerseSuggestion } from "./VerseSuggestion";
 
 const FULL_VERSE_REG =
-    /^:(?:\[(\w{3})\]\s+)?([123]*[A-z& ]{3,}) (\d{1,3})(?:\s+|:)(\d+(?:-\d+)?(?:,\d+(?:-\d+)?)*):$/i;
+    /^:(!)?(?:\[(\w{3})\]\s+)?([123]*[A-z& ]{3,}) (\d{1,3})(?:\s+|:)(\d+(?:-\d+)?(?:,\d+(?:-\d+)?)*):$/i;
 
 export class VerseSuggester extends EditorSuggest<VerseSuggestion> {
     constructor(public plugin: LdsLibraryPlugin) {
@@ -50,19 +50,21 @@ export class VerseSuggester extends EditorSuggest<VerseSuggestion> {
 
         if (fullMatch === null) return [];
 
-        const language = fullMatch[1] ?? preferredLanguage;
+        const style = fullMatch[1] === "!" ? "callout" : "blockquote";
+        const language = fullMatch[2] ?? preferredLanguage;
         if (!isAvailableLanguage(language))
             throw new Error(`${language} is not a valid language option`);
 
-        const book = fullMatch[2];
-        const chapter = Number(fullMatch[3]);
-        const verseString = fullMatch[4];
+        const book = fullMatch[3];
+        const chapter = Number(fullMatch[4]);
+        const verseString = fullMatch[5];
 
         const suggestion = await VerseSuggestion.create(
             book,
             chapter,
             verseString,
             language,
+            style,
         );
         return [suggestion];
     }
