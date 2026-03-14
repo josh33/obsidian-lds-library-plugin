@@ -2,6 +2,8 @@ import { AvailableLanguage } from "@/lang";
 import { bookData } from "@/utils/config";
 import { fetchScripture } from "@/utils/scripture";
 
+type VerseInsertStyle = "blockquote" | "callout";
+
 export class VerseSuggestion {
     // defining variables in the class.
     public text: string;
@@ -16,6 +18,7 @@ export class VerseSuggestion {
         public chapter: number,
         public verseString: string,
         public lang: AvailableLanguage,
+        public style: VerseInsertStyle,
     ) {
         this.verseIds = verseString
             .split(",")
@@ -34,12 +37,14 @@ export class VerseSuggestion {
         chapter: number,
         verseString: string,
         lang: AvailableLanguage,
+        style: VerseInsertStyle,
     ) {
         const suggestion = new VerseSuggestion(
             book,
             chapter,
             verseString,
             lang,
+            style,
         );
 
         await suggestion.loadVerse();
@@ -47,20 +52,21 @@ export class VerseSuggestion {
     }
 
     public getReplacement(): string {
-        if (!this.verseString.includes(",") && !this.verseString.includes("-")) {
-            const verse = this.verses[0];
+        if (this.style === "callout") {
+            const range = this.verseString.replaceAll(",", ", ");
 
-            if (!verse) {
-                return "\n";
-            }
-
-            return `> ${this.bookTitleInLanguage} ${this.chapter}:${verse.verse} ${verse.text}\n`;
+            return [
+                `> [!ldslib] [${this.bookTitleInLanguage}:${range}](${this.url})`,
+                this.text,
+                "",
+            ].join("\n");
         }
 
-        const range = this.verseString.replaceAll(",", ", ");
         return [
-            `> [!ldslib] [${this.bookTitleInLanguage}:${range}](${this.url})`,
-            this.text,
+            ...this.verses.map(
+                ({ verse, text }) =>
+                    `> ${this.bookTitleInLanguage} ${this.chapter}:${verse} ${text}`,
+            ),
             "",
         ].join("\n");
     }
@@ -122,9 +128,7 @@ export class VerseSuggestion {
             };
         });
 
-        this.text = this.verses
-            .map(({ verse, text }) => `> ${verse} ${text}`)
-            .join("\n");
+        this.text = this.verses.map(({ verse, text }) => `> ${verse} ${text}`).join("\n");
 
         this.previewText = this.verses
             .map(({ verse, text }) => `${verse} ${text}`)
