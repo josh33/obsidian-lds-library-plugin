@@ -11,6 +11,7 @@ export class VerseSuggestion {
     private bookTitleInLanguage: string;
     private verseIds: string;
     private url: string;
+    private vaultBookTitle: string;
     private verses: { verse: number; text: string }[] = [];
 
     private constructor(
@@ -81,6 +82,31 @@ export class VerseSuggestion {
         return `https://www.churchofjesuschrist.org/study/scriptures/${volumeTitleShort}/${bookTitleShort}/${this.chapter}?lang=${this.lang}&id=${this.verseIds}`;
     }
 
+    private getVaultLink(verse: number): string {
+        return `[[${this.vaultBookTitle} ${this.chapter}#${verse}]]`;
+    }
+
+    private getSelectedVerses(): number[] {
+        return this.verseString
+            .split(",")
+            .flatMap((segment) => {
+                const [startRaw, endRaw] = segment.split("-");
+                const start = Number(startRaw.trim());
+                const end = Number((endRaw ?? startRaw).trim());
+
+                if (Number.isNaN(start) || Number.isNaN(end)) {
+                    return [];
+                }
+
+                const [min, max] = start <= end ? [start, end] : [end, start];
+
+                return Array.from(
+                    { length: max - min + 1 },
+                    (_, index) => min + index,
+                );
+            });
+    }
+
     private normalizeBookInput(bookTitle: string): string {
         return bookTitle.toLowerCase().replace(/[^a-z0-9]/g, "");
     }
@@ -96,21 +122,21 @@ export class VerseSuggestion {
                 )
             ) {
                 const volume = info.volume;
-                return [name, volume];
+                return [name, volume, info.names[0]];
             }
         }
-        return ["", ""];
+        return ["", "", ""];
     }
 
     private async loadVerse(): Promise<void> {
-        const [bookTitleShort, volumeTitleShort] = this.getShortenedName(
-            this.book,
-        );
+        const [bookTitleShort, volumeTitleShort, vaultBookTitle] =
+            this.getShortenedName(this.book);
 
         if (bookTitleShort === "" || volumeTitleShort === "")
             throw new Error(`Couldn't find book name ${this.book}`);
 
         this.url = this.getUrl(volumeTitleShort, bookTitleShort);
+        this.vaultBookTitle = vaultBookTitle;
 
         const scriptureData = await fetchScripture(this.url);
         this.bookTitleInLanguage =

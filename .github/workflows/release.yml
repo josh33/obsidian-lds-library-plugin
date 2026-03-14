@@ -4,6 +4,14 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g. 2.0.2)'
+        required: true
+
+permissions:
+  contents: write
 
 env:
   PLUGIN_NAME: lds-scriptures-reference
@@ -31,10 +39,12 @@ jobs:
         run: ls -R
 
       - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
           files: |
             main.js
             manifest.json
             styles.css
+          fail_on_unmatched_files: true
