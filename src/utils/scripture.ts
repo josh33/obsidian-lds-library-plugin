@@ -27,8 +27,13 @@ export async function fetchScripture(_url: string): Promise<ScriptureData> {
         );
 
     const $ = cheerio.load(response.json.content.body);
-    const nativeBookTitle = response.json.meta.title;
-    const [book, chapter] = nativeBookTitle.split(" ");
+    const nativeBookTitleWithChapter = response.json.meta.title;
+    const nativeBookTitle = nativeBookTitleWithChapter
+        .replace(/\s+\d+$/, "")
+        .trim();
+    const chapterMatch = nativeBookTitleWithChapter.match(/(\d+)\s*$/);
+    const chapter = Number(chapterMatch?.[1] ?? "0");
+    const book = nativeBookTitle;
 
     const verses = url.paragraphs.flatMap((p) => {
         if (p.kind === ParagraphKind.Single) {
