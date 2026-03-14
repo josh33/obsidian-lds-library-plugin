@@ -52,14 +52,18 @@ export class VerseSuggestion {
         return suggestion;
     }
 
+    private getInternalLink(): string {
+        const firstRange = this.verseString.split(",")[0]?.trim() ?? "";
+        const firstVerse = firstRange.split("-")[0]?.trim() ?? "";
+        const displayRange = this.verseString;
+
+        return `[[${this.bookTitleInLanguage} ${this.chapter}#${firstVerse}|${this.bookTitleInLanguage}:${displayRange}]]`;
+    }
+
     public getReplacement(): string {
         if (this.style === "callout") {
-            const range = this.verseString.replaceAll(",", ", ");
-            const [firstVerse] = this.getSelectedVerses();
-            const titleLink = this.getVaultLink(firstVerse);
-
             return [
-                `> [!ldslib] [${this.bookTitleInLanguage}:${range}](${titleLink})`,
+                `> [!ldslib] ${this.getInternalLink()}`,
                 this.text,
                 "",
             ].join("\n");
@@ -156,15 +160,7 @@ export class VerseSuggestion {
             };
         });
 
-        this.text = this.verses
-            .map(({ verse, text }) => {
-                if (this.style === "callout") {
-                    return `> [${verse}](${this.getVaultLink(verse)}) ${text}`;
-                }
-
-                return `> ${verse} ${text}`;
-            })
-            .join("\n");
+        this.text = this.verses.map(({ verse, text }) => `> ${verse} ${text}`).join("\n");
 
         this.previewText = this.verses
             .map(({ verse, text }) => `${verse} ${text}`)
