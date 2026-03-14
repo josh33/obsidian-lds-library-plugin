@@ -34,12 +34,13 @@ jobs:
 
       - name: List output files (debug)
         run: ls -R
-
+        
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
-          files: |
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          files:
             main.js
             manifest.json
             styles.css
