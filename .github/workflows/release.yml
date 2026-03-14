@@ -4,6 +4,11 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g. 2.0.2)'
+        required: true
 
 env:
   PLUGIN_NAME: lds-scriptures-reference
