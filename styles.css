@@ -1,7 +1,7 @@
 /* CSS Variables */
 /* Common CSS Variables */
 :root {
-    --lds-callout-icon-quote: book-open-text;
+    --lds-callout-icon-quote: lucide-book-open-text;
     --lds-callout-font-size: 1em;
     --lds-callout-line-height: 1.5em;
     --lds-callout-title-font-size: 1.25em;
@@ -37,7 +37,7 @@
 
 /* Lds Callout */
 .callout[data-callout="ldslib"] {
-    --lds-callout-icon: var(--lds-callout-icon-quote);
+    --callout-icon: var(--lds-callout-icon-quote);
     --link-external-color: var(--lds-callout-color-primary);
     border-color: var(--lds-callout-color-border) !important;
     border-radius: var(--lds-callout-border-radius);
